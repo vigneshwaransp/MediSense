@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MediSense AI</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f7fa;--bg2:#fff;--bg3:#f0f2f5;
+  --border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.14);
+  --accent:#2563eb;--green:#16a34a;--green-bg:rgba(22,163,74,0.08);
+  --red:#dc2626;--red-bg:rgba(220,38,38,0.08);
+  --amber:#d97706;--amber-bg:rgba(217,119,6,0.09);
+  --purple:#7c3aed;
+  --text:#111827;--text2:#374151;--text3:#6b7280;
+  --r:14px;--rs:8px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-font-smoothing:antialiased;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:236px;background:#fff;border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:100;}
+.logo{padding:20px 18px 16px;border-bottom:1px solid var(--border);}
+.logo-icon{width:34px;height:34px;border-radius:8px;background:linear-gradient(135deg,#2563eb,#7c3aed);display:flex;align-items:center;justify-content:center;margin-bottom:8px;}
+.logo-icon svg{width:18px;height:18px;}
+.logo h1{font-family:'DM Serif Display',serif;font-size:16px;font-weight:400;}
+.logo p{font-size:10px;color:var(--text3);margin-top:1px;letter-spacing:.6px;text-transform:uppercase;}
+.nav{flex:1;padding:10px 0;overflow-y:auto;}
+.nav-lbl{font-size:10px;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);padding:10px 18px 4px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 18px;cursor:pointer;font-size:13.5px;color:var(--text2);transition:all .15s;border-left:2px solid transparent;}
+.nav-item svg{width:15px;height:15px;opacity:.5;flex-shrink:0;}
+.nav-item:hover{color:var(--text);background:rgba(37,99,235,.04);}
+.nav-item.active{color:var(--accent);background:rgba(37,99,235,.07);border-left-color:var(--accent);font-weight:500;}
+.nav-item.active svg{opacity:1;}
+.sfooter{padding:12px 18px 16px;border-top:1px solid var(--border);}
+.uchip{display:flex;align-items:center;gap:8px;background:var(--bg3);border-radius:8px;padding:8px 10px;margin-bottom:8px;}
+.av{width:27px;height:27px;border-radius:50%;background:linear-gradient(135deg,#2563eb,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:#fff;flex-shrink:0;}
+.main{margin-left:236px;min-height:100vh;}
+.topbar{background:#fff;border-bottom:1px solid var(--border);padding:0 28px;height:54px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;box-shadow:0 1px 3px rgba(0,0,0,.04);}
+.topbar h2{font-family:'DM Serif Display',serif;font-size:19px;font-weight:400;}
+.topbar-r{display:flex;align-items:center;gap:8px;}
+.badge-on{background:var(--green-bg);color:var(--green);border:1px solid rgba(22,163,74,.2);border-radius:20px;padding:3px 10px;font-size:11.5px;font-weight:500;display:flex;align-items:center;gap:5px;}
+.badge-on::before{content:'';width:5px;height:5px;background:var(--green);border-radius:50%;}
+.date-lbl{background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:4px 11px;font-size:12px;color:var(--text3);}
+.content{padding:24px 28px;}
+.panel{display:none;}.panel.active{display:block;}
+
+.card{background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:20px;box-shadow:0 1px 4px rgba(0,0,0,.04);}
+.card-title{font-size:14.5px;font-weight:500;}.card-sub{font-size:12px;color:var(--text3);margin-top:1px;}
+.chdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:15px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:15px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:15px;}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+
+.vcard{background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:15px;position:relative;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.04);}
+.vcard::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.vg::before{background:#16a34a;}.vb::before{background:#2563eb;}.va::before{background:#d97706;}.vr::before{background:#dc2626;}
+.v-lbl{font-size:10.5px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px;}
+.v-val{font-size:24px;font-family:'DM Serif Display',serif;}
+.v-unit{font-size:11px;color:var(--text3);margin-left:2px;}
+
+.dtbl{width:100%;border-collapse:collapse;}
+.dtbl th{text-align:left;font-size:10.5px;letter-spacing:.5px;text-transform:uppercase;color:var(--text3);font-weight:500;padding:8px 11px;border-bottom:1px solid var(--border);}
+.dtbl td{padding:10px 11px;font-size:13px;border-bottom:1px solid var(--border);}
+.dtbl tr:last-child td{border-bottom:none;}
+.dtbl tr:hover td{background:rgba(37,99,235,.02);}
+
+.flg{padding:2px 8px;border-radius:20px;font-size:10.5px;font-weight:600;}
+.fn{background:var(--green-bg);color:var(--green);}.fh{background:var(--red-bg);color:var(--red);}
+.fl{background:var(--amber-bg);color:var(--amber);}.fw{background:var(--amber-bg);color:var(--amber);}
+
+.btn-sm{background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:6px 12px;font-size:12.5px;color:var(--text2);cursor:pointer;font-family:inherit;transition:all .15s;}
+.btn-sm:hover{border-color:var(--accent);color:var(--accent);}
+.btn-pri{background:var(--accent);border:none;border-radius:9px;padding:11px 20px;color:#fff;font-size:13.5px;font-weight:500;cursor:pointer;font-family:inherit;width:100%;transition:opacity .2s;display:flex;align-items:center;justify-content:center;gap:7px;}
+.btn-pri:hover{opacity:.9;}
+.btn-pri.green-btn{background:var(--green);}
+.btn-pri.red-btn{background:var(--red);}
+
+.spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.ldots{display:flex;gap:4px;align-items:center;}
+.ldots span{width:6px;height:6px;background:var(--text3);border-radius:50%;animation:ldot 1.2s ease-in-out infinite;}
+.ldots span:nth-child(2){animation-delay:.2s;}.ldots span:nth-child(3){animation-delay:.4s;}
+@keyframes ldot{0%,80%,100%{opacity:.2;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}
+
+.ph{text-align:center;padding:40px 16px;color:var(--text3);font-size:13px;}
+.ph-ico{font-size:30px;margin-bottom:10px;opacity:.3;}
+.disclaimer{background:var(--amber-bg);border:1px solid rgba(217,119,6,.2);border-radius:var(--rs);padding:11px 14px;font-size:12px;color:var(--amber);line-height:1.6;display:flex;gap:8px;}
+.stat-card{background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.04);}
+.info-box{background:rgba(37,99,235,.06);border:1px solid rgba(37,99,235,.15);border-radius:var(--rs);padding:11px 14px;font-size:12.5px;color:var(--accent);line-height:1.7;display:flex;gap:8px;margin-bottom:14px;}
+.success-box{background:rgba(22,163,74,.06);border:1px solid rgba(22,163,74,.2);border-radius:var(--rs);padding:11px 14px;font-size:12.5px;color:var(--green);line-height:1.7;display:flex;gap:8px;margin-bottom:14px;}
+
+/* ══ VIDEO CALL ══ */
+.vid-wrap{background:#0f172a;border-radius:var(--r);overflow:hidden;aspect-ratio:16/9;position:relative;display:flex;align-items:center;justify-content:center;}
+.vid-wrap video{width:100%;height:100%;object-fit:cover;display:none;}
+.vid-ph{display:flex;flex-direction:column;align-items:center;gap:9px;color:#64748b;}
+.vid-ph svg{width:44px;height:44px;opacity:.35;}
+.vid-ph p{font-size:13px;opacity:.55;}
+.vid-lbl{position:absolute;bottom:10px;left:12px;background:rgba(0,0,0,.52);color:#fff;font-size:11.5px;padding:3px 10px;border-radius:20px;}
+.vid-dot{position:absolute;top:10px;right:12px;width:9px;height:9px;border-radius:50%;background:#475569;}
+.vid-dot.live{background:#dc2626;animation:livepulse 1.5s infinite;}
+@keyframes livepulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(220,38,38,.45)}70%{box-shadow:0 0 0 7px rgba(220,38,38,0)}}
+.call-ctrl{display:flex;align-items:center;justify-content:center;gap:9px;padding:12px 0 4px;}
+.ctrl-btn{width:42px;height:42px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:17px;transition:all .15s;}
+.ctrl-btn:hover{transform:scale(1.1);}
+.c-cam{background:#dbeafe;}.c-mic{background:#dbeafe;}.c-end{background:#fee2e2;}.c-rec{background:#dcfce7;}.c-share{background:#f3e8ff;}
+.ctrl-btn.on{box-shadow:0 0 0 3px rgba(220,38,38,.35);}
+.wave-strip{display:flex;align-items:center;gap:3px;height:22px;}
+.wb{width:3px;background:var(--accent);border-radius:2px;height:4px;}
+.wave-strip.live .wb{animation:wv .8s ease-in-out infinite;}
+.wb:nth-child(1){animation-delay:0s;}.wb:nth-child(2){animation-delay:.1s;}.wb:nth-child(3){animation-delay:.2s;}
+.wb:nth-child(4){animation-delay:.3s;}.wb:nth-child(5){animation-delay:.4s;}.wb:nth-child(6){animation-delay:.5s;}
+@keyframes wv{0%,100%{height:4px}50%{height:17px}}
+.txp{background:#fff;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column;}
+.txp-hdr{padding:12px 15px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.txp-body{flex:1;padding:13px 15px;min-height:280px;max-height:360px;overflow-y:auto;font-size:13.5px;line-height:1.75;color:var(--text2);}
+.txp-body::-webkit-scrollbar{width:4px;}.txp-body::-webkit-scrollbar-thumb{background:#d1d5db;border-radius:2px;}
+.tx-entry{margin-bottom:12px;}
+.tx-spk{font-size:10px;font-weight:600;color:var(--accent);margin-bottom:2px;letter-spacing:.4px;}
+.tx-entry.remote .tx-spk{color:var(--purple);}
+.tx-ts{font-size:10px;color:var(--text3);margin-left:6px;font-weight:400;}
+.txp-ftr{padding:9px 13px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.rec-badge{display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--red);font-weight:500;}
+.rec-dot{width:6px;height:6px;background:var(--red);border-radius:50%;animation:livepulse 1.2s infinite;}
+.note-box{background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);padding:13px;font-size:13px;line-height:1.7;color:var(--text2);}
+
+/* ══ OCR ══ */
+.ocr-tabs{display:flex;background:var(--bg3);border-radius:9px;padding:3px;margin-bottom:14px;width:fit-content;}
+.ocr-tab{padding:7px 15px;border-radius:6px;font-size:13px;cursor:pointer;color:var(--text3);border:none;background:none;font-family:inherit;transition:all .15s;}
+.ocr-tab:hover{color:var(--text2);}
+.ocr-tab.active{background:#fff;color:var(--text);font-weight:500;box-shadow:0 1px 3px rgba(0,0,0,.07);}
+.ocr-mode{display:none;}.ocr-mode.active{display:block;}
+.drop-label{display:block;border:2px dashed var(--border2);border-radius:var(--r);padding:36px 20px;text-align:center;cursor:pointer;background:#f8f9fb;transition:all .2s;}
+.drop-label:hover,.drop-label.dragging{border-color:var(--accent);background:rgba(37,99,235,.04);}
+#ocr-file-inp{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;}
+.chip-row{display:flex;gap:6px;justify-content:center;margin-top:10px;flex-wrap:wrap;}
+.fchip{background:#fff;border:1px solid var(--border);border-radius:5px;padding:2px 8px;font-size:11px;color:var(--text3);font-weight:500;}
+.preview-img{width:100%;border-radius:var(--rs);border:1px solid var(--border);margin-bottom:11px;max-height:220px;object-fit:contain;background:#f8f9fb;}
+.prog-lbl{font-size:11.5px;color:var(--text3);margin-bottom:4px;display:flex;justify-content:space-between;}
+.prog-bg{background:#e5e7eb;border-radius:4px;height:6px;overflow:hidden;margin-bottom:11px;}
+.prog-bar{height:100%;background:linear-gradient(90deg,#2563eb,#7c3aed);border-radius:4px;width:0%;transition:width .3s;}
+.ocr-raw{background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);padding:11px;font-size:12px;line-height:1.7;color:var(--text2);max-height:150px;overflow-y:auto;white-space:pre-wrap;font-family:monospace;}
+.f-list{background:#fff;border:1px solid var(--border);border-radius:var(--rs);overflow:hidden;}
+.f-row{display:flex;align-items:flex-start;gap:10px;padding:9px 12px;border-bottom:1px solid var(--border);}
+.f-row:last-child{border-bottom:none;}.f-row:hover{background:#f8f9fb;}
+.f-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px;}
+.f-name{font-size:13px;font-weight:500;flex:1;}.f-val{font-size:13px;color:var(--text2);min-width:80px;}
+.f-ref{font-size:11px;color:var(--text3);min-width:70px;}
+.sum-box{background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);padding:13px;margin-top:11px;}
+.sum-title{font-size:13px;font-weight:500;margin-bottom:7px;}
+.rec-item{display:flex;align-items:flex-start;gap:6px;font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:5px;}
+.rec-item::before{content:'→';color:var(--accent);flex-shrink:0;}
+.cam-wrap{background:#0f172a;border-radius:var(--r);overflow:hidden;aspect-ratio:16/9;position:relative;display:flex;align-items:center;justify-content:center;margin-bottom:11px;}
+.cam-wrap video{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;display:none;}
+.cam-ph{display:flex;flex-direction:column;align-items:center;gap:8px;color:#64748b;z-index:1;}
+.cam-ph svg{width:40px;height:40px;opacity:.4;}
+.minput{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:8px 11px;color:var(--text);font-size:13.5px;font-family:inherit;outline:none;transition:border-color .15s;}
+.minput:focus{border-color:var(--accent);background:#fff;}
+
+/* ══ PREDICTION ══ */
+.s-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:15px;}
+.s-chip{background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:8px 11px;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:7px;transition:all .12s;color:var(--text2);}
+.s-chip:hover{border-color:var(--accent);color:var(--text);}
+.s-chip.sel{background:rgba(37,99,235,.07);border-color:var(--accent);color:var(--accent);font-weight:500;}
+.chk{width:14px;height:14px;border-radius:50%;border:1.5px solid var(--border2);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .12s;}
+.s-chip.sel .chk{background:var(--accent);border-color:var(--accent);}
+.s-chip.sel .chk::after{content:'✓';font-size:9px;color:#fff;}
+.d-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:10px;}
+.d-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.d-name{font-size:14px;font-weight:500;}.d-pct{font-size:18px;font-family:'DM Serif Display',serif;}
+.d-bar-bg{background:#e5e7eb;border-radius:4px;height:5px;margin-bottom:8px;overflow:hidden;}
+.d-bar{height:100%;border-radius:4px;transition:width 1s ease;}
+.d-info{font-size:12.5px;color:var(--text3);line-height:1.6;}
+.d-ftr{display:flex;justify-content:space-between;align-items:center;margin-top:8px;flex-wrap:wrap;gap:5px;}
+.ubadge{padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600;}
+
+/* ══ CHAT ══ */
+.chat-wrap{background:#fff;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column;height:460px;box-shadow:0 1px 4px rgba(0,0,0,.04);}
+.chat-hdr{padding:13px 17px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:9px;}
+.ai-dot{width:8px;height:8px;background:var(--green);border-radius:50%;box-shadow:0 0 0 2px rgba(22,163,74,.2);}
+.chat-msgs{flex:1;overflow-y:auto;padding:17px;display:flex;flex-direction:column;gap:11px;background:#f8f9fb;}
+.chat-msgs::-webkit-scrollbar{width:4px;}.chat-msgs::-webkit-scrollbar-thumb{background:#d1d5db;border-radius:2px;}
+.msg{max-width:80%;font-size:13.5px;line-height:1.6;padding:10px 14px;border-radius:12px;}
+.msg.ai{background:#fff;color:var(--text);align-self:flex-start;border:1px solid var(--border);border-bottom-left-radius:3px;}
+.msg.user{background:var(--accent);color:#fff;align-self:flex-end;border-bottom-right-radius:3px;}
+.msg-time{font-size:10px;opacity:.55;margin-top:4px;}
+.chat-in-row{padding:11px 13px;border-top:1px solid var(--border);display:flex;gap:8px;}
+.chat-in{flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:9px;padding:9px 13px;color:var(--text);font-size:13.5px;font-family:inherit;outline:none;transition:border-color .2s;}
+.chat-in:focus{border-color:var(--accent);background:#fff;}
+.chat-in::placeholder{color:var(--text3);}
+.send-btn{background:var(--accent);border:none;border-radius:9px;width:40px;height:40px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.send-btn:hover{opacity:.88;}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2L3 7V17L12 22L21 17V7L12 2Z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/><path d="M12 8V16M8 12H16" stroke="white" stroke-width="2" stroke-linecap="round"/></svg></div>
+    <h1>MediSense AI</h1><p>Clinical Intelligence</p>
+  </div>
+  <nav class="nav">
+    <div class="nav-lbl">Core</div>
+    <div class="nav-item active" onclick="goTab('dashboard',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Dashboard</div>
+    <div class="nav-item" onclick="goTab('video',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>Video Call Transcribe</div>
+    <div class="nav-item" onclick="goTab('ocr',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><circle cx="10" cy="14" r="3"/><path d="M21 21l-3.5-3.5"/></svg>OCR Report Scanner</div>
+    <div class="nav-item" onclick="goTab('predict',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Disease Predict</div>
+    <div class="nav-item" onclick="goTab('chat',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>AI Physician Chat</div>
+    <div class="nav-lbl">Records</div>
+    <div class="nav-item" onclick="goTab('history',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>Patient History</div>
+  </nav>
+  <div class="sfooter">
+    <div class="uchip"><div class="av">DR</div><div><div style="font-size:13px;font-weight:500;">Dr. Rajan</div><div style="font-size:11px;color:var(--text3);">General Physician</div></div></div>
+    <div style="text-align:center;font-size:10.5px;color:var(--text3);">MediSense v3.0 · HIPAA Compliant</div>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <h2 id="page-title">Clinical Dashboard</h2>
+    <div class="topbar-r"><div class="badge-on">Systems Operational</div><div class="date-lbl" id="date-lbl"></div></div>
+  </div>
+  <div class="content">
+
+  <!-- ══ DASHBOARD ══ -->
+  <div class="panel active" id="panel-dashboard">
+    <!-- Editable vitals -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+      <div style="font-size:13px;color:var(--text3);">Patient vitals — click any card or <b style="color:var(--accent)">Edit Vitals</b> to update</div>
+      <button class="btn-sm" onclick="openVitalsModal()" style="border-color:var(--accent);color:var(--accent);">✏️ Edit Vitals</button>
+    </div>
+    <div class="g4" style="margin-bottom:16px;">
+      <div class="vcard vg" onclick="openVitalsModal()" style="cursor:pointer;" title="Click to edit">
+        <div class="v-lbl">Heart Rate</div>
+        <div class="v-val" id="d-hr">72<span class="v-unit">bpm</span></div>
+        <div class="v-st" id="d-hr-st" style="color:var(--green)">● Normal sinus rhythm</div>
+      </div>
+      <div class="vcard vb" onclick="openVitalsModal()" style="cursor:pointer;" title="Click to edit">
+        <div class="v-lbl">Blood Pressure</div>
+        <div class="v-val" id="d-bp">118<span class="v-unit">/76</span></div>
+        <div class="v-st" id="d-bp-st" style="color:var(--green)">● Optimal range</div>
+      </div>
+      <div class="vcard va" onclick="openVitalsModal()" style="cursor:pointer;" title="Click to edit">
+        <div class="v-lbl">Blood Glucose</div>
+        <div class="v-val" id="d-glu">105<span class="v-unit">mg/dL</span></div>
+        <div class="v-st" id="d-glu-st" style="color:var(--amber)">▲ Pre-meal</div>
+      </div>
+      <div class="vcard vg" onclick="openVitalsModal()" style="cursor:pointer;" title="Click to edit">
+        <div class="v-lbl">SpO₂</div>
+        <div class="v-val" id="d-spo2">98<span class="v-unit">%</span></div>
+        <div class="v-st" id="d-spo2-st" style="color:var(--green)">● Excellent</div>
+      </div>
+    </div>
+    <div class="g2" style="margin-bottom:16px;">
+      <div class="card">
+        <div class="chdr">
+          <div><div class="card-title">Recent Consultations</div><div class="card-sub">Last 7 days</div></div>
+          <button class="btn-sm" onclick="openAddConsultModal()">+ Add</button>
+        </div>
+        <table class="dtbl"><thead><tr><th>Patient</th><th>Condition</th><th>Date</th><th>Status</th><th></th></tr></thead>
+        <tbody id="consult-tbody">
+          <tr><td><b>Arun K.</b></td><td>Hypertension</td><td>Today</td><td><span class="flg fw">Follow-up</span></td><td><button class="btn-sm" style="padding:2px 7px;font-size:11px;" onclick="removeRow(this)">✕</button></td></tr>
+          <tr><td><b>Priya M.</b></td><td>Type 2 Diabetes</td><td>Yesterday</td><td><span class="flg fn">Stable</span></td><td><button class="btn-sm" style="padding:2px 7px;font-size:11px;" onclick="removeRow(this)">✕</button></td></tr>
+          <tr><td><b>Ravi S.</b></td><td>Chest Pain</td><td>Mar 16</td><td><span class="flg fh">Urgent</span></td><td><button class="btn-sm" style="padding:2px 7px;font-size:11px;" onclick="removeRow(this)">✕</button></td></tr>
+          <tr><td><b>Lakshmi T.</b></td><td>Anemia</td><td>Mar 15</td><td><span class="flg fn">Recovering</span></td><td><button class="btn-sm" style="padding:2px 7px;font-size:11px;" onclick="removeRow(this)">✕</button></td></tr>
+          <tr><td><b>Kiran P.</b></td><td>Migraine</td><td>Mar 14</td><td><span class="flg fn">Discharged</span></td><td><button class="btn-sm" style="padding:2px 7px;font-size:11px;" onclick="removeRow(this)">✕</button></td></tr>
+        </tbody></table>
+      </div>
+      <div class="card">
+        <div class="chdr"><div><div class="card-title">AI Features</div><div class="card-sub">Quick access</div></div></div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div onclick="goTabById('video')" style="cursor:pointer;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);padding:13px;display:flex;align-items:center;gap:11px;transition:all .15s;" onmouseover="this.style.borderColor='#2563eb'" onmouseout="this.style.borderColor='var(--border)'">
+            <div style="width:36px;height:36px;background:rgba(37,99,235,.1);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:17px;">📹</div>
+            <div><div style="font-size:13.5px;font-weight:500;">Video Call</div><div style="font-size:11.5px;color:var(--text3);">Two-person WebRTC + live transcription</div></div>
+            <div style="margin-left:auto;color:var(--text3);">→</div>
+          </div>
+          <div onclick="goTabById('ocr')" style="cursor:pointer;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);padding:13px;display:flex;align-items:center;gap:11px;transition:all .15s;" onmouseover="this.style.borderColor='#7c3aed'" onmouseout="this.style.borderColor='var(--border)'">
+            <div style="width:36px;height:36px;background:rgba(124,58,237,.1);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:17px;">🔬</div>
+            <div><div style="font-size:13.5px;font-weight:500;">OCR Report Scanner</div><div style="font-size:11.5px;color:var(--text3);">Claude Vision analyzes lab report images</div></div>
+            <div style="margin-left:auto;color:var(--text3);">→</div>
+          </div>
+          <div onclick="goTabById('predict')" style="cursor:pointer;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);padding:13px;display:flex;align-items:center;gap:11px;transition:all .15s;" onmouseover="this.style.borderColor='#16a34a'" onmouseout="this.style.borderColor='var(--border)'">
+            <div style="width:36px;height:36px;background:rgba(22,163,74,.1);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:17px;">🧬</div>
+            <div><div style="font-size:13.5px;font-weight:500;">Disease Prediction</div><div style="font-size:11.5px;color:var(--text3);">AI symptom-based differential diagnosis</div></div>
+            <div style="margin-left:auto;color:var(--text3);">→</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="g3">
+      <div class="stat-card">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+          <div style="font-size:11.5px;color:var(--text3);margin-bottom:5px;">Total Patients</div>
+          <button class="btn-sm" style="padding:2px 7px;font-size:11px;" onclick="editStat('total-patients','Total Patients')">✏️</button>
+        </div>
+        <div style="font-size:26px;font-family:'DM Serif Display',serif;color:var(--accent)" id="stat-total-patients">2,841</div>
+        <div style="font-size:12px;color:var(--green);margin-top:4px;" id="stat-total-patients-ch">↑ 12% this month</div>
+      </div>
+      <div class="stat-card">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+          <div style="font-size:11.5px;color:var(--text3);margin-bottom:5px;">Reports Scanned</div>
+          <button class="btn-sm" style="padding:2px 7px;font-size:11px;" onclick="editStat('reports-scanned','Reports Scanned')">✏️</button>
+        </div>
+        <div style="font-size:26px;font-family:'DM Serif Display',serif;color:var(--purple)" id="stat-reports-scanned">1,204</div>
+        <div style="font-size:12px;color:var(--green);margin-top:4px;" id="stat-reports-scanned-ch">↑ 8% this month</div>
+      </div>
+      <div class="stat-card">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+          <div style="font-size:11.5px;color:var(--text3);margin-bottom:5px;">AI Accuracy</div>
+          <button class="btn-sm" style="padding:2px 7px;font-size:11px;" onclick="editStat('ai-accuracy','AI Accuracy')">✏️</button>
+        </div>
+        <div style="font-size:26px;font-family:'DM Serif Display',serif;color:var(--green)" id="stat-ai-accuracy">94.2%</div>
+        <div style="font-size:12px;color:var(--green);margin-top:4px;" id="stat-ai-accuracy-ch">↑ 0.6% vs last quarter</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VITALS EDIT MODAL -->
+  <div id="vitals-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:999;display:none;align-items:center;justify-content:center;">
+    <div style="background:#fff;border-radius:16px;padding:28px;width:480px;max-width:95vw;box-shadow:0 20px 60px rgba(0,0,0,0.15);">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+        <div style="font-size:16px;font-weight:500;">Edit Patient Vitals</div>
+        <button onclick="closeVitalsModal()" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--text3);line-height:1;">×</button>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;">
+        <div>
+          <label style="font-size:11.5px;color:var(--text3);display:block;margin-bottom:5px;">Heart Rate (bpm)</label>
+          <input id="v-hr" type="number" placeholder="72" class="minput">
+        </div>
+        <div>
+          <label style="font-size:11.5px;color:var(--text3);display:block;margin-bottom:5px;">Systolic BP (mmHg)</label>
+          <input id="v-sys" type="number" placeholder="118" class="minput">
+        </div>
+        <div>
+          <label style="font-size:11.5px;color:var(--text3);display:block;margin-bottom:5px;">Diastolic BP (mmHg)</label>
+          <input id="v-dia" type="number" placeholder="76" class="minput">
+        </div>
+        <div>
+          <label style="font-size:11.5px;color:var(--text3);display:block;margin-bottom:5px;">Blood Glucose (mg/dL)</label>
+          <input id="v-glu" type="number" placeholder="105" class="minput">
+        </div>
+        <div>
+          <label style="font-size:11.5px;color:var(--text3);display:block;margin-bottom:5px;">SpO₂ (%)</label>
+          <input id="v-spo2" type="number" placeholder="98" class="minput">
+        </div>
+        <div>
+          <label style="font-size:11.5px;color:var(--text3);display:block;margin-bottom:5px;">Temperature (°F)</label>
+          <input id="v-temp" type="number" placeholder="98.6" step="0.1" class="minput">
+        </div>
+        <div>
+          <label style="font-size:11.5px;color:var(--text3);display:block;margin-bottom:5px;">Resp. Rate (breaths/min)</label>
+          <input id="v-rr" type="number" placeholder="16" class="minput">
+        </div>
+        <div>
+          <label style="font-size:11.5px;color:var(--text3);display:block;margin-bottom:5px;">Weight (kg)</label>
+          <input id="v-wt" type="number" placeholder="70" class="minput">
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn-sm" onclick="closeVitalsModal()" style="flex:1;">Cancel</button>
+        <button class="btn-pri" onclick="saveVitals()" style="flex:2;">Save Vitals</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD CONSULTATION MODAL -->
+  <div id="consult-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:999;align-items:center;justify-content:center;">
+    <div style="background:#fff;border-radius:16px;padding:28px;width:420px;max-width:95vw;box-shadow:0 20px 60px rgba(0,0,0,0.15);">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+        <div style="font-size:16px;font-weight:500;">Add Consultation</div>
+        <button onclick="closeConsultModal()" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--text3);line-height:1;">×</button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:20px;">
+        <div>
+          <label style="font-size:11.5px;color:var(--text3);display:block;margin-bottom:5px;">Patient Name</label>
+          <input id="c-name" type="text" placeholder="e.g. John D." class="minput">
+        </div>
+        <div>
+          <label style="font-size:11.5px;color:var(--text3);display:block;margin-bottom:5px;">Condition / Diagnosis</label>
+          <input id="c-cond" type="text" placeholder="e.g. Hypertension" class="minput">
+        </div>
+        <div>
+          <label style="font-size:11.5px;color:var(--text3);display:block;margin-bottom:5px;">Date</label>
+          <input id="c-date" type="text" placeholder="e.g. Today" class="minput">
+        </div>
+        <div>
+          <label style="font-size:11.5px;color:var(--text3);display:block;margin-bottom:5px;">Status</label>
+          <select id="c-status" class="minput">
+            <option value="fn">Stable</option>
+            <option value="fw">Follow-up</option>
+            <option value="fh">Urgent</option>
+            <option value="fl">Recovering</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn-sm" onclick="closeConsultModal()" style="flex:1;">Cancel</button>
+        <button class="btn-pri" onclick="addConsultRow()" style="flex:2;">Add Entry</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STAT EDIT MODAL -->
+  <div id="stat-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:999;align-items:center;justify-content:center;">
+    <div style="background:#fff;border-radius:16px;padding:28px;width:360px;max-width:95vw;box-shadow:0 20px 60px rgba(0,0,0,0.15);">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+        <div style="font-size:16px;font-weight:500;" id="stat-modal-title">Edit Stat</div>
+        <button onclick="closeStatModal()" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--text3);line-height:1;">×</button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:20px;">
+        <div>
+          <label style="font-size:11.5px;color:var(--text3);display:block;margin-bottom:5px;">Value</label>
+          <input id="stat-val-inp" type="text" class="minput" placeholder="e.g. 3,100">
+        </div>
+        <div>
+          <label style="font-size:11.5px;color:var(--text3);display:block;margin-bottom:5px;">Change note</label>
+          <input id="stat-ch-inp" type="text" class="minput" placeholder="e.g. ↑ 15% this month">
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn-sm" onclick="closeStatModal()" style="flex:1;">Cancel</button>
+        <button class="btn-pri" onclick="saveStatEdit()" style="flex:2;">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ VIDEO CALL — TWO-PERSON WebRTC ══ -->
+  <div class="panel" id="panel-video">
+    <!-- Room setup bar -->
+    <div class="card" style="padding:16px;margin-bottom:14px;">
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <div style="font-size:14px;font-weight:500;flex-shrink:0;">🔗 Room ID:</div>
+        <input id="room-id-inp" type="text" class="minput" style="width:200px;font-family:monospace;" placeholder="Paste or generate room ID">
+        <button class="btn-pri" style="width:auto;padding:8px 16px;" onclick="generateRoom()">Generate New Room</button>
+        <button class="btn-pri" style="width:auto;padding:8px 16px;background:var(--green);" onclick="copyRoomLink()">📋 Copy Room ID</button>
+        <div id="room-status" style="font-size:12.5px;color:var(--text3);margin-left:4px;">No active room</div>
+      </div>
+      <div id="room-hint" style="margin-top:10px;font-size:12.5px;color:var(--text3);background:var(--bg3);border-radius:var(--rs);padding:9px 12px;display:none;">
+        Share the <b>Room ID</b> with the patient. They open this app, paste the Room ID into the field, and click <b>🔗 Join</b>. Both of you click Join to connect peer-to-peer.
+      </div>
+    </div>
+
+    <div class="info-box" style="margin-bottom:14px;">
+      <span style="font-size:15px;flex-shrink:0;">ℹ️</span>
+      <span><b>Two-person video call via WebRTC:</b> Doctor clicks <b>Generate New Room</b> → copies the <b>Room ID</b> → shares it with the patient. Patient pastes the Room ID into the field and clicks <b>🔗 Join</b>. Doctor also clicks <b>🔗 Join</b> to start the peer-to-peer call. Then click <b>⏺ Record</b> to transcribe the conversation.</span>
+    </div>
+
+    <div class="g2">
+      <div>
+        <div class="card" style="padding:16px;margin-bottom:15px;">
+          <div class="chdr">
+            <div><div class="card-title">Your Camera</div><div class="card-sub" id="peer-label">Waiting for patient to join…</div></div>
+            <span id="call-status" style="font-size:12px;color:var(--text3);">Idle</span>
+          </div>
+
+          <!-- Local + Remote videos side by side -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+            <div style="position:relative;">
+              <div class="vid-wrap" id="local-vid-wrap" style="aspect-ratio:4/3;">
+                <div class="vid-ph" id="local-ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg><p>Your camera</p></div>
+                <video id="local-vid" autoplay muted playsinline style="display:none;width:100%;height:100%;object-fit:cover;"></video>
+              </div>
+              <div style="position:absolute;bottom:6px;left:8px;background:rgba(0,0,0,0.55);color:#fff;font-size:11px;padding:2px 8px;border-radius:12px;">You</div>
+            </div>
+            <div style="position:relative;">
+              <div class="vid-wrap" id="remote-vid-wrap" style="aspect-ratio:4/3;background:#0f172a;">
+                <div class="vid-ph" id="remote-ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg><p id="remote-ph-txt">Patient not connected</p></div>
+                <video id="remote-vid" autoplay playsinline style="display:none;width:100%;height:100%;object-fit:cover;"></video>
+              </div>
+              <div style="position:absolute;bottom:6px;left:8px;background:rgba(0,0,0,0.55);color:#fff;font-size:11px;padding:2px 8px;border-radius:12px;">Patient</div>
+              <div id="remote-dot" style="display:none;position:absolute;top:8px;right:8px;width:9px;height:9px;border-radius:50%;background:#dc2626;animation:livepulse 1.5s infinite;"></div>
+            </div>
+          </div>
+
+          <!-- Controls -->
+          <div class="call-ctrl">
+            <button class="ctrl-btn c-cam" id="btn-cam" onclick="toggleCamera()" title="Camera">📷</button>
+            <button class="ctrl-btn c-mic" id="btn-mic" onclick="toggleMic()" title="Mic">🎙️</button>
+            <button class="ctrl-btn c-rec" id="btn-rec" onclick="toggleRecording()" title="Record">⏺️</button>
+            <button class="ctrl-btn" style="background:#dbeafe;" onclick="joinRoom()" title="Join Room" id="btn-join">🔗 Join</button>
+            <button class="ctrl-btn c-end" onclick="endCall()" title="End Call">📵</button>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 2px 0;">
+            <div style="display:flex;align-items:center;gap:9px;">
+              <div class="wave-strip" id="call-wave"><div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div></div>
+              <span id="rec-status-txt" style="font-size:12px;color:var(--text3);">Not recording</span>
+            </div>
+            <div style="display:flex;gap:6px;">
+              <div id="rec-ind" style="display:none;" class="rec-badge"><div class="rec-dot"></div>LIVE</div>
+              <button class="btn-sm" onclick="runDemo()" style="font-size:11.5px;">▶ Demo</button>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="chdr"><div><div class="card-title">AI Clinical Note</div><div class="card-sub">SOAP note from transcript</div></div><button class="btn-sm" onclick="generateNote()">Generate Note</button></div>
+          <div id="note-ph" class="ph"><div class="ph-ico">📋</div>Record a consultation, then click "Generate Note".</div>
+          <div id="note-loading" style="display:none;text-align:center;padding:22px;"><div class="ldots" style="justify-content:center;"><span></span><span></span><span></span></div><p style="font-size:12.5px;color:var(--text3);margin-top:9px;">Generating note…</p></div>
+          <div id="note-content" style="display:none;"></div>
+        </div>
+      </div>
+      <div>
+        <div class="txp" style="min-height:580px;">
+          <div class="txp-hdr">
+            <div><div style="font-size:14px;font-weight:500;">Live Transcript</div><div style="font-size:11.5px;color:var(--text3);margin-top:1px;">Audio-to-text · real-time</div></div>
+            <div style="display:flex;gap:6px;align-items:center;">
+              <button class="btn-sm" onclick="clearTx()">Clear</button>
+              <button class="btn-sm" onclick="copyTx()">Copy</button>
+              <button class="btn-sm" onclick="exportTx()">Export</button>
+            </div>
+          </div>
+          <div class="txp-body" id="tx-body">
+            <div id="tx-ph" style="text-align:center;padding:40px 16px;color:var(--text3);font-size:13px;">
+              <div style="font-size:30px;margin-bottom:10px;opacity:.3;">🎙️</div>
+              Generate a room, share the <b>Room ID</b> with the patient, both click <b>🔗 Join</b>, then click <b>⏺ Record</b> to transcribe.
+            </div>
+          </div>
+          <div class="txp-ftr">
+            <div id="interim-txt" style="flex:1;font-size:12.5px;color:var(--text3);font-style:italic;min-height:18px;"></div>
+            <span id="word-count" style="font-size:11.5px;color:var(--text3);">0 words</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="disclaimer" style="margin-top:14px;"><span style="font-size:15px;flex-shrink:0;">⚠️</span><span>Video call uses <b>WebRTC peer-to-peer</b> with Google's public STUN server. No video data passes through any server. Transcription is local via Web Speech API. Always obtain patient consent before recording.</span></div>
+  </div>
+
+  <!-- ══ OCR REPORT SCANNER ══ -->
+  <div class="panel" id="panel-ocr">
+    <div class="success-box">
+      <span style="font-size:15px;flex-shrink:0;">✅</span>
+      <span><b>Powered by Claude Vision AI</b> — Upload any lab report image (JPG, PNG, PDF screenshot, etc.) and Claude will read and analyze it directly. No Tesseract or external OCR library needed — works entirely through the Claude API.</span>
+    </div>
+    <div class="g2">
+      <div class="card">
+        <div class="chdr"><div><div class="card-title">Upload Lab Report Image</div><div class="card-sub">Claude Vision reads and interprets it</div></div></div>
+        <div class="ocr-tabs">
+          <button class="ocr-tab active" onclick="switchOcrMode('upload',this)">Upload Image</button>
+          <button class="ocr-tab" onclick="switchOcrMode('camera',this)">Use Camera</button>
+          <button class="ocr-tab" onclick="switchOcrMode('manual',this)">Enter Values</button>
+        </div>
+
+        <!-- UPLOAD -->
+        <div class="ocr-mode active" id="ocr-upload">
+          <label class="drop-label" for="ocr-file-inp" id="drop-label">
+            <div style="font-size:32px;margin-bottom:10px;opacity:.38;">🖼️</div>
+            <div style="font-size:14px;font-weight:500;margin-bottom:5px;">Drop lab report image here</div>
+            <div style="font-size:13px;color:var(--text3);">or click to browse — Claude Vision will read and analyze it</div>
+            <div class="chip-row"><span class="fchip">JPG</span><span class="fchip">PNG</span><span class="fchip">WEBP</span><span class="fchip">BMP</span><span class="fchip">GIF</span></div>
+          </label>
+          <input type="file" id="ocr-file-inp" accept="image/*" onchange="handleImageUpload(event)">
+          <div id="img-preview-wrap" style="display:none;margin-top:14px;">
+            <img id="preview-img" class="preview-img" alt="Report preview">
+            <div id="upload-prog" style="display:none;">
+              <div class="prog-lbl"><span>Sending to Claude Vision…</span><span id="upload-pct">0%</span></div>
+              <div class="prog-bg"><div class="prog-bar" id="upload-bar"></div></div>
+            </div>
+            <button class="btn-pri" id="analyze-img-btn" onclick="analyzeImageWithClaude()" style="display:none;">
+              <span id="analyze-img-txt">Analyze with Claude Vision</span>
+              <div id="analyze-img-spinner" class="spinner" style="display:none;"></div>
+            </button>
+          </div>
+        </div>
+
+        <!-- CAMERA -->
+        <div class="ocr-mode" id="ocr-camera">
+          <div class="cam-wrap">
+            <div class="cam-ph" id="cam-ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="12" cy="13" r="4"/><path d="M20 7h-2.5l-1.5-2h-8L6.5 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/></svg><p id="cam-ph-txt">Click Start Camera</p></div>
+            <video id="cam-vid" autoplay playsinline></video>
+            <canvas id="cam-canvas" style="display:none;"></canvas>
+          </div>
+          <div class="info-box" style="margin-bottom:10px;margin-top:0;">
+            <span style="font-size:14px;flex-shrink:0;">ℹ️</span>
+            <span>Point your camera at a printed lab report, click <b>Capture</b>, then <b>Analyze</b> — Claude Vision will read and interpret it.</span>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn-pri" style="flex:1;" onclick="startCam()">Start Camera</button>
+            <button class="btn-pri green-btn" style="flex:1;" onclick="captureAndAnalyze()">📸 Capture &amp; Analyze</button>
+          </div>
+          <div id="cam-prog" style="display:none;margin-top:11px;">
+            <div class="prog-lbl"><span>Sending to Claude Vision…</span><span id="cam-pct">0%</span></div>
+            <div class="prog-bg"><div class="prog-bar" id="cam-bar"></div></div>
+          </div>
+        </div>
+
+        <!-- MANUAL -->
+        <div class="ocr-mode" id="ocr-manual">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px;">
+            <div><label style="font-size:11.5px;color:var(--text3);display:block;margin-bottom:4px;">Hemoglobin (g/dL)</label><input id="m-hb" type="number" placeholder="e.g. 12.5" class="minput"></div>
+            <div><label style="font-size:11.5px;color:var(--text3);display:block;margin-bottom:4px;">WBC (×10³/μL)</label><input id="m-wbc" type="number" placeholder="e.g. 7.2" class="minput"></div>
+            <div><label style="font-size:11.5px;color:var(--text3);display:block;margin-bottom:4px;">Platelets (×10³/μL)</label><input id="m-plt" type="number" placeholder="e.g. 250" class="minput"></div>
+            <div><label style="font-size:11.5px;color:var(--text3);display:block;margin-bottom:4px;">Blood Glucose (mg/dL)</label><input id="m-glu" type="number" placeholder="e.g. 105" class="minput"></div>
+            <div><label style="font-size:11.5px;color:var(--text3);display:block;margin-bottom:4px;">Creatinine (mg/dL)</label><input id="m-cr" type="number" placeholder="e.g. 1.0" class="minput"></div>
+            <div><label style="font-size:11.5px;color:var(--text3);display:block;margin-bottom:4px;">TSH (mIU/L)</label><input id="m-tsh" type="number" placeholder="e.g. 2.5" class="minput"></div>
+          </div>
+          <button class="btn-pri" onclick="analyzeManualValues()">
+            <span id="manual-txt">Analyze with AI</span>
+            <div id="manual-spin" class="spinner" style="display:none;"></div>
+          </button>
+        </div>
+      </div>
+
+      <!-- RESULTS -->
+      <div class="card">
+        <div class="chdr"><div><div class="card-title">Analysis Results</div><div class="card-sub">Claude Vision interpretation</div></div><button class="btn-sm" onclick="exportReport()">Export</button></div>
+        <div id="ocr-ph" class="ph"><div class="ph-ico">🔬</div>Upload a lab report image or enter values manually. Claude AI will identify test names, values, reference ranges and flag abnormal results.</div>
+        <div id="ocr-loading" style="display:none;text-align:center;padding:44px;"><div class="ldots" style="justify-content:center;"><span></span><span></span><span></span></div><p style="font-size:12.5px;color:var(--text3);margin-top:10px;">Claude Vision analyzing…</p></div>
+        <div id="ocr-findings" style="display:none;"></div>
+        <div id="ocr-summary" style="display:none;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ DISEASE PREDICTION ══ -->
+  <div class="panel" id="panel-predict">
+    <div class="g2">
+      <div class="card">
+        <div class="chdr"><div><div class="card-title">Symptom Checker</div><div class="card-sub">Select presenting symptoms</div></div><button class="btn-sm" onclick="clearSym()">Clear All</button></div>
+        <div class="s-grid" id="sym-grid"></div>
+        <div style="margin-bottom:13px;"><label style="font-size:12.5px;color:var(--text3);display:block;margin-bottom:7px;">Additional context</label><textarea id="symp-ctx" placeholder="e.g., 45-year-old male, symptoms for 3 days, history of diabetes…" style="width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);padding:9px 12px;color:var(--text);font-size:13px;font-family:inherit;resize:vertical;min-height:65px;outline:none;line-height:1.6;"></textarea></div>
+        <button class="btn-pri" onclick="runPrediction()"><span id="pred-txt">Run AI Prediction</span><div id="pred-spin" class="spinner" style="display:none;"></div></button>
+      </div>
+      <div class="card">
+        <div class="chdr"><div><div class="card-title">Differential Diagnosis</div><div class="card-sub">AI-generated probabilities</div></div></div>
+        <div id="pred-ph" class="ph"><div class="ph-ico">🧬</div>Select symptoms and click Run AI Prediction.</div>
+        <div id="pred-loading" style="display:none;text-align:center;padding:44px;"><div class="ldots" style="justify-content:center;"><span></span><span></span><span></span></div><p style="font-size:12.5px;color:var(--text3);margin-top:10px;">Running AI analysis…</p></div>
+        <div id="pred-results" style="display:none;"><div id="pred-content"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ CHAT ══ -->
+  <div class="panel" id="panel-chat">
+    <div style="max-width:780px;">
+      <div class="chat-wrap">
+        <div class="chat-hdr"><div class="ai-dot"></div><div><div style="font-size:14px;font-weight:500;">AI Clinical Physician</div><div style="font-size:11px;color:var(--text3);">Powered by Claude · Evidence-based</div></div></div>
+        <div class="chat-msgs" id="chat-msgs">
+          <div class="msg ai">Hello! I'm your AI clinical assistant. I can help with:<br><br>• Lab result interpretation<br>• Differential diagnosis support<br>• Drug interactions &amp; dosage<br>• Evidence-based treatment protocols<br><br>How can I assist you today?<div class="msg-time">Just now</div></div>
+        </div>
+        <div class="chat-in-row">
+          <input class="chat-in" id="chat-in" placeholder="Ask about symptoms, labs, medications, diagnoses…" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat();}">
+          <button class="send-btn" onclick="sendChat()"><svg viewBox="0 0 24 24" fill="white"><path d="M22 2L11 13"/><path d="M22 2L15 22L11 13L2 9L22 2Z"/></svg></button>
+        </div>
+      </div>
+      <div class="disclaimer" style="margin-top:13px;"><span style="font-size:15px;flex-shrink:0;">⚠️</span><span>Educational information only — not a substitute for professional medical advice, diagnosis, or treatment.</span></div>
+    </div>
+  </div>
+
+  <!-- ══ HISTORY ══ -->
+  <div class="panel" id="panel-history">
+    <div class="card">
+      <div class="chdr"><div><div class="card-title">Patient Medical Records</div><div class="card-sub">Recent encounters</div></div><button class="btn-sm">+ New Record</button></div>
+      <table class="dtbl"><thead><tr><th>ID</th><th>Name</th><th>Age</th><th>Condition</th><th>Last Visit</th><th>BP</th><th>Glucose</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td style="color:var(--text3);font-size:11.5px;">#P-0041</td><td><b>Arun Kumar</b></td><td>52</td><td>Hypertension, T2DM</td><td>Today</td><td>142/88</td><td>148 mg/dL</td><td><span class="flg fw">Monitor</span></td></tr>
+        <tr><td style="color:var(--text3);font-size:11.5px;">#P-0039</td><td><b>Priya Menon</b></td><td>44</td><td>Type 2 Diabetes</td><td>Mar 17</td><td>118/76</td><td>112 mg/dL</td><td><span class="flg fn">Stable</span></td></tr>
+        <tr><td style="color:var(--text3);font-size:11.5px;">#P-0038</td><td><b>Ravi Suresh</b></td><td>61</td><td>Angina, CHD</td><td>Mar 16</td><td>150/94</td><td>136 mg/dL</td><td><span class="flg fh">Critical</span></td></tr>
+        <tr><td style="color:var(--text3);font-size:11.5px;">#P-0035</td><td><b>Lakshmi T.</b></td><td>29</td><td>Iron-deficiency Anemia</td><td>Mar 15</td><td>108/70</td><td>88 mg/dL</td><td><span class="flg fl">Recovering</span></td></tr>
+        <tr><td style="color:var(--text3);font-size:11.5px;">#P-0032</td><td><b>Kiran Prasad</b></td><td>35</td><td>Chronic Migraine</td><td>Mar 14</td><td>120/78</td><td>94 mg/dL</td><td><span class="flg fn">Discharged</span></td></tr>
+        <tr><td style="color:var(--text3);font-size:11.5px;">#P-0028</td><td><b>Divya Krishnan</b></td><td>67</td><td>COPD, Hypertension</td><td>Mar 12</td><td>138/86</td><td>122 mg/dL</td><td><span class="flg fw">Monitor</span></td></tr>
+      </tbody></table>
+    </div>
+  </div>
+
+  </div><!-- /content -->
+</main>
+
+<script>
+/* ═══ NAV ═══ */
+document.getElementById('date-lbl').textContent=new Date().toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+const PAGE={dashboard:'Clinical Dashboard',video:'Video Call Transcription',ocr:'OCR Report Scanner',predict:'Disease Prediction',chat:'AI Physician Chat',history:'Patient History'};
+function goTab(id,el){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  document.getElementById('page-title').textContent=PAGE[id]||id;
+  if(el)el.classList.add('active');
+}
+function goTabById(id){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>{n.classList.remove('active');if(n.getAttribute('onclick')&&n.getAttribute('onclick').includes("'"+id+"'"))n.classList.add('active');});
+  document.getElementById('panel-'+id).classList.add('active');
+  document.getElementById('page-title').textContent=PAGE[id]||id;
+}
+
+/* ═══ DASHBOARD EDIT ═══ */
+function openVitalsModal(){
+  const m=document.getElementById('vitals-modal');
+  m.style.display='flex';
+  // Pre-fill current values
+  const hrTxt=document.getElementById('d-hr').textContent.replace('bpm','').trim();
+  const bpTxt=document.getElementById('d-bp').textContent.replace('/','|').split('|');
+  document.getElementById('v-hr').value=parseInt(hrTxt)||'';
+  document.getElementById('v-sys').value=parseInt(bpTxt[0])||'';
+  document.getElementById('v-dia').value=parseInt(bpTxt[1])||'';
+  document.getElementById('v-glu').value=parseInt(document.getElementById('d-glu').textContent)||'';
+  document.getElementById('v-spo2').value=parseInt(document.getElementById('d-spo2').textContent)||'';
+}
+function closeVitalsModal(){document.getElementById('vitals-modal').style.display='none';}
+function saveVitals(){
+  const hr=+document.getElementById('v-hr').value;
+  const sys=+document.getElementById('v-sys').value;
+  const dia=+document.getElementById('v-dia').value;
+  const glu=+document.getElementById('v-glu').value;
+  const spo2=+document.getElementById('v-spo2').value;
+  const temp=document.getElementById('v-temp').value;
+  const rr=document.getElementById('v-rr').value;
+  const wt=document.getElementById('v-wt').value;
+  if(hr){
+    document.getElementById('d-hr').innerHTML=hr+'<span class="v-unit">bpm</span>';
+    const hrSt=document.getElementById('d-hr-st');
+    if(hr<60){hrSt.textContent='▼ Bradycardia';hrSt.style.color='var(--amber)';}
+    else if(hr>100){hrSt.textContent='▲ Tachycardia';hrSt.style.color='var(--red)';}
+    else{hrSt.textContent='● Normal sinus rhythm';hrSt.style.color='var(--green)';}
+  }
+  if(sys&&dia){
+    document.getElementById('d-bp').innerHTML=sys+'<span class="v-unit">/'+dia+'</span>';
+    const bpSt=document.getElementById('d-bp-st');
+    if(sys>=140||dia>=90){bpSt.textContent='▲ Hypertension';bpSt.style.color='var(--red)';}
+    else if(sys<90){bpSt.textContent='▼ Hypotension';bpSt.style.color='var(--amber)';}
+    else{bpSt.textContent='● Optimal range';bpSt.style.color='var(--green)';}
+  }
+  if(glu){
+    document.getElementById('d-glu').innerHTML=glu+'<span class="v-unit">mg/dL</span>';
+    const gluSt=document.getElementById('d-glu-st');
+    if(glu>=200){gluSt.textContent='▲ Hyperglycemia';gluSt.style.color='var(--red)';}
+    else if(glu>=126){gluSt.textContent='▲ Diabetic range';gluSt.style.color='var(--amber)';}
+    else if(glu<70){gluSt.textContent='▼ Hypoglycemia';gluSt.style.color='var(--red)';}
+    else{gluSt.textContent='● Normal fasting';gluSt.style.color='var(--green)';}
+  }
+  if(spo2){
+    document.getElementById('d-spo2').innerHTML=spo2+'<span class="v-unit">%</span>';
+    const spSt=document.getElementById('d-spo2-st');
+    if(spo2<90){spSt.textContent='▼ Critical low';spSt.style.color='var(--red)';}
+    else if(spo2<95){spSt.textContent='▼ Low';spSt.style.color='var(--amber)';}
+    else{spSt.textContent='● Excellent';spSt.style.color='var(--green)';}
+  }
+  closeVitalsModal();
+  // Flash all cards green briefly
+  document.querySelectorAll('.vcard').forEach(c=>{c.style.transition='box-shadow .3s';c.style.boxShadow='0 0 0 2px var(--green)';setTimeout(()=>c.style.boxShadow='',1000);});
+}
+
+function openAddConsultModal(){
+  document.getElementById('c-name').value='';
+  document.getElementById('c-cond').value='';
+  document.getElementById('c-date').value='Today';
+  document.getElementById('consult-modal').style.display='flex';
+}
+function closeConsultModal(){document.getElementById('consult-modal').style.display='none';}
+function addConsultRow(){
+  const name=document.getElementById('c-name').value.trim();
+  const cond=document.getElementById('c-cond').value.trim();
+  const date=document.getElementById('c-date').value.trim()||'Today';
+  const status=document.getElementById('c-status').value;
+  const labels={fn:'Stable',fw:'Follow-up',fh:'Urgent',fl:'Recovering'};
+  if(!name){alert('Enter a patient name.');return;}
+  const tr=document.createElement('tr');
+  tr.innerHTML=`<td><b>${name}</b></td><td>${cond||'—'}</td><td>${date}</td><td><span class="flg ${status}">${labels[status]}</span></td><td><button class="btn-sm" style="padding:2px 7px;font-size:11px;" onclick="removeRow(this)">✕</button></td>`;
+  document.getElementById('consult-tbody').prepend(tr);
+  closeConsultModal();
+}
+function removeRow(btn){btn.closest('tr').remove();}
+
+let _editingStatId='';
+function editStat(id,title){
+  _editingStatId=id;
+  document.getElementById('stat-modal-title').textContent='Edit: '+title;
+  document.getElementById('stat-val-inp').value=document.getElementById('stat-'+id).textContent;
+  document.getElementById('stat-ch-inp').value=document.getElementById('stat-'+id+'-ch').textContent;
+  document.getElementById('stat-modal').style.display='flex';
+}
+function closeStatModal(){document.getElementById('stat-modal').style.display='none';}
+function saveStatEdit(){
+  const v=document.getElementById('stat-val-inp').value.trim();
+  const ch=document.getElementById('stat-ch-inp').value.trim();
+  if(v)document.getElementById('stat-'+_editingStatId).textContent=v;
+  if(ch)document.getElementById('stat-'+_editingStatId+'-ch').textContent=ch;
+  closeStatModal();
+}
+// Close modals on backdrop click
+['vitals-modal','consult-modal','stat-modal'].forEach(id=>{
+  document.getElementById(id).addEventListener('click',function(e){if(e.target===this)this.style.display='none';});
+});
+
+/* ═══ VIDEO CALL — WebRTC PEER-TO-PEER ═══ */
+let localStream=null,peerConn=null,roomId=null,isInitiator=false;
+let isRec=false,recog=null,txList=[],wc=0,micMuted=false,spkToggle=true;
+let demoTimer=null,demoIdx=0;
+
+// WebRTC config with public Google STUN servers
+const RTC_CONFIG={iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'}]};
+
+// We use a simple signaling channel via BroadcastChannel (same browser/tab) OR
+// via localStorage polling (cross-tab on same device) for the demo.
+// For real cross-device use, a signaling server (e.g. Firebase) is needed.
+// Here we implement cross-tab via localStorage for demo/same-device use.
+let sigPollInterval=null;
+
+function generateRoom(){
+  roomId=Math.random().toString(36).substr(2,8).toUpperCase();
+  document.getElementById('room-id-inp').value=roomId;
+  document.getElementById('room-id-inp').removeAttribute('readonly');
+  document.getElementById('room-status').textContent='Room created — copy the ID and share it with the patient';
+  document.getElementById('room-status').style.color='var(--accent)';
+  document.getElementById('room-hint').style.display='block';
+  // Clear any old signaling data for this room
+  localStorage.removeItem('sig_'+roomId+'_offer');
+  localStorage.removeItem('sig_'+roomId+'_answer');
+  localStorage.removeItem('sig_'+roomId+'_ice_a');
+  localStorage.removeItem('sig_'+roomId+'_ice_b');
+  isInitiator=true;
+}
+
+function copyRoomLink(){
+  if(!roomId){alert('Generate a room first.');return;}
+  // Copy just the Room ID — the other person pastes it into the Room ID field and clicks Join
+  navigator.clipboard.writeText(roomId).then(()=>{
+    document.getElementById('room-status').textContent='✓ Room ID copied! Send it to the patient — they paste it and click Join';
+    document.getElementById('room-status').style.color='var(--green)';
+  }).catch(()=>{
+    // Fallback: show a prompt so they can manually copy
+    window.prompt('Copy this Room ID and share it with the patient:',roomId);
+  });
+}
+
+async function joinRoom(){
+  const inp=document.getElementById('room-id-inp').value.trim().toUpperCase();
+  if(!inp){alert('Enter or generate a Room ID first.');return;}
+  roomId=inp;
+  // Detect role: if an offer already exists in localStorage, we're the joiner; otherwise we're the initiator
+  const existingOffer=localStorage.getItem('sig_'+roomId+'_offer');
+  isInitiator = !existingOffer;
+  document.getElementById('room-status').textContent='Connecting… ('+(isInitiator?'waiting for patient':'joining room')+')';
+  document.getElementById('room-status').style.color='var(--amber)';
+  try{
+    localStream=await navigator.mediaDevices.getUserMedia({video:true,audio:true});
+    const lv=document.getElementById('local-vid');
+    lv.srcObject=localStream; lv.style.display='block';
+    document.getElementById('local-ph').style.display='none';
+    document.getElementById('call-status').textContent='● Camera on';
+    document.getElementById('call-status').style.color='var(--green)';
+  }catch(e){
+    alert('Camera/mic access denied.\n\nPlease allow camera and microphone in your browser, then try again.');
+    return;
+  }
+  setupPeer();
+}
+
+function setupPeer(){
+  peerConn=new RTCPeerConnection(RTC_CONFIG);
+  localStream.getTracks().forEach(t=>peerConn.addTrack(t,localStream));
+
+  peerConn.ontrack=e=>{
+    const rv=document.getElementById('remote-vid');
+    if(!rv.srcObject){rv.srcObject=new MediaStream();}
+    rv.srcObject.addTrack(e.track);
+    rv.style.display='block';
+    document.getElementById('remote-ph').style.display='none';
+    document.getElementById('remote-dot').style.display='block';
+    document.getElementById('peer-label').textContent='Patient connected ●';
+    document.getElementById('peer-label').style.color='var(--green)';
+    document.getElementById('room-status').textContent='✓ Connected peer-to-peer';
+    document.getElementById('room-status').style.color='var(--green)';
+  };
+
+  peerConn.onicecandidate=e=>{
+    if(e.candidate){
+      const key=isInitiator?'sig_'+roomId+'_ice_a':'sig_'+roomId+'_ice_b';
+      const existing=JSON.parse(localStorage.getItem(key)||'[]');
+      existing.push(e.candidate);
+      localStorage.setItem(key,JSON.stringify(existing));
+    }
+  };
+
+  peerConn.onconnectionstatechange=()=>{
+    const s=peerConn.connectionState;
+    if(s==='connected'){
+      document.getElementById('call-status').textContent='● Live Call';
+      document.getElementById('call-status').style.color='var(--green)';
+    } else if(s==='disconnected'||s==='failed'){
+      document.getElementById('peer-label').textContent='Patient disconnected';
+      document.getElementById('peer-label').style.color='var(--red)';
+      document.getElementById('remote-dot').style.display='none';
+    }
+  };
+
+  if(isInitiator){
+    // Create offer
+    peerConn.createOffer().then(offer=>{
+      peerConn.setLocalDescription(offer);
+      localStorage.setItem('sig_'+roomId+'_offer',JSON.stringify(offer));
+      // Poll for answer
+      sigPollInterval=setInterval(async()=>{
+        const ans=localStorage.getItem('sig_'+roomId+'_answer');
+        if(ans&&!peerConn.remoteDescription){
+          await peerConn.setRemoteDescription(JSON.parse(ans));
+          applyRemoteICE('sig_'+roomId+'_ice_b');
+          clearInterval(sigPollInterval);
+          pollICE('sig_'+roomId+'_ice_b');
+        }
+      },500);
+    });
+  } else {
+    // Poll for offer then create answer
+    sigPollInterval=setInterval(async()=>{
+      const off=localStorage.getItem('sig_'+roomId+'_offer');
+      if(off&&!peerConn.remoteDescription){
+        clearInterval(sigPollInterval);
+        await peerConn.setRemoteDescription(JSON.parse(off));
+        const answer=await peerConn.createAnswer();
+        await peerConn.setLocalDescription(answer);
+        localStorage.setItem('sig_'+roomId+'_answer',JSON.stringify(answer));
+        applyRemoteICE('sig_'+roomId+'_ice_a');
+        pollICE('sig_'+roomId+'_ice_a');
+      }
+    },500);
+  }
+  document.getElementById('btn-join').textContent='✓ Joined';
+  document.getElementById('btn-join').style.background='#dcfce7';
+}
+
+function applyRemoteICE(key){
+  const candidates=JSON.parse(localStorage.getItem(key)||'[]');
+  candidates.forEach(c=>{try{peerConn.addIceCandidate(new RTCIceCandidate(c));}catch(e){}});
+}
+function pollICE(key){
+  let last=0;
+  const iv=setInterval(()=>{
+    const c=JSON.parse(localStorage.getItem(key)||'[]');
+    for(let i=last;i<c.length;i++){try{peerConn.addIceCandidate(new RTCIceCandidate(c[i]));}catch(e){}}
+    last=c.length;
+    if(peerConn.connectionState==='connected')clearInterval(iv);
+  },500);
+}
+
+function toggleCamera(){
+  if(!localStream){joinRoom();return;}
+  const track=localStream.getVideoTracks()[0];
+  if(track){track.enabled=!track.enabled;document.getElementById('btn-cam').textContent=track.enabled?'📷':'🚫';}
+}
+function toggleMic(){
+  micMuted=!micMuted;
+  if(localStream)localStream.getAudioTracks().forEach(t=>t.enabled=!micMuted);
+  document.getElementById('btn-mic').textContent=micMuted?'🔇':'🎙️';
+}
+function endCall(){
+  if(peerConn){peerConn.close();peerConn=null;}
+  if(localStream){localStream.getTracks().forEach(t=>t.stop());localStream=null;}
+  if(sigPollInterval)clearInterval(sigPollInterval);
+  if(isRec)toggleRecording();
+  document.getElementById('local-vid').style.display='none'; document.getElementById('local-ph').style.display='flex';
+  document.getElementById('remote-vid').style.display='none'; document.getElementById('remote-ph').style.display='flex';
+  document.getElementById('remote-ph-txt').textContent='Patient not connected';
+  document.getElementById('remote-dot').style.display='none';
+  document.getElementById('call-status').textContent='Idle'; document.getElementById('call-status').style.color='var(--text3)';
+  document.getElementById('peer-label').textContent='Waiting for patient to join…'; document.getElementById('peer-label').style.color='';
+  document.getElementById('btn-join').textContent='🔗 Join'; document.getElementById('btn-join').style.background='#dbeafe';
+  document.getElementById('room-status').textContent='Call ended'; document.getElementById('room-status').style.color='var(--text3)';
+  if(roomId){['offer','answer','ice_a','ice_b'].forEach(k=>localStorage.removeItem('sig_'+roomId+'_'+k));}
+}
+
+/* ═══ SPEECH RECOGNITION / RECORDING ═══ */
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+if(SR){
+  recog=new SR();recog.continuous=true;recog.interimResults=true;recog.lang='en-US';
+  recog.onresult=e=>{
+    let interim='';
+    for(let i=e.resultIndex;i<e.results.length;i++){
+      if(e.results[i].isFinal){
+        const t=e.results[i][0].transcript.trim();
+        if(t){addTx(t,spkToggle?'DR. RAJAN':'PATIENT',spkToggle?'':'remote');spkToggle=!spkToggle;wc+=t.split(/\s+/).length;document.getElementById('word-count').textContent=wc+' words';}
+        interim='';
+      }else interim+=e.results[i][0].transcript;
+    }
+    document.getElementById('interim-txt').textContent=interim?'… '+interim:'';
+  };
+  recog.onerror=e=>{
+    if(e.error==='not-allowed'||e.error==='service-not-allowed'){
+      document.getElementById('rec-status-txt').textContent='Mic blocked — use Demo Mode';
+      document.getElementById('rec-status-txt').style.color='var(--red)';
+      stopRec();
+    }
+  };
+  recog.onend=()=>{if(isRec)try{recog.start();}catch(e){}};
+}
+
+function toggleRecording(){
+  if(!SR){alert('Web Speech API not supported in this browser.\nPlease use Google Chrome or Microsoft Edge.\n\nOr click Demo Mode to see a simulated transcript.');return;}
+  isRec?stopRec():startRec();
+}
+function startRec(){
+  isRec=true;spkToggle=true;
+  document.getElementById('tx-ph').style.display='none';
+  document.getElementById('btn-rec').textContent='⏹️';
+  document.getElementById('btn-rec').classList.add('on');
+  document.getElementById('call-wave').classList.add('live');
+  document.getElementById('rec-status-txt').textContent='Recording…';
+  document.getElementById('rec-status-txt').style.color='var(--red)';
+  document.getElementById('rec-ind').style.display='flex';
+  try{recog.start();}catch(e){}
+}
+function stopRec(){
+  isRec=false;
+  document.getElementById('btn-rec').textContent='⏺️';
+  document.getElementById('btn-rec').classList.remove('on');
+  document.getElementById('call-wave').classList.remove('live');
+  document.getElementById('rec-status-txt').textContent='Not recording';
+  document.getElementById('rec-status-txt').style.color='var(--text3)';
+  document.getElementById('rec-ind').style.display='none';
+  document.getElementById('interim-txt').textContent='';
+  try{recog.stop();}catch(e){}
+  if(demoTimer){clearTimeout(demoTimer);demoTimer=null;}
+}
+const DEMO=[
+  {t:"Good morning, how are you feeling today?",d:true},
+  {t:"I've had chest tightness since yesterday evening, doctor.",d:false},
+  {t:"Can you describe the sensation — is it sharp or more like pressure?",d:true},
+  {t:"It's more like pressure. It gets worse when I climb stairs.",d:false},
+  {t:"Any shortness of breath or palpitations associated with it?",d:true},
+  {t:"Yes, I felt short of breath last night. No palpitations though.",d:false},
+  {t:"Have you taken any medication for this? Do you have any known allergies?",d:true},
+  {t:"I took one aspirin this morning. No known drug allergies.",d:false},
+  {t:"Alright. I'd like to run an ECG and blood tests — specifically troponin levels.",d:true},
+  {t:"Should I be worried, doctor?",d:false},
+  {t:"We'll have a clearer picture after the results. Please avoid exertion for now.",d:true},
+  {t:"Understood. When should I come back?",d:false},
+  {t:"Results should be ready in 2 hours. I'll review them and call you immediately.",d:true},
+];
+function runDemo(){
+  demoIdx=0;clearTx();
+  document.getElementById('tx-ph').style.display='none';
+  document.getElementById('call-wave').classList.add('live');
+  document.getElementById('rec-status-txt').textContent='Demo running…';
+  document.getElementById('rec-status-txt').style.color='var(--accent)';
+  document.getElementById('rec-ind').style.display='flex';
+  nextDemoLine();
+}
+function nextDemoLine(){
+  if(demoIdx>=DEMO.length){document.getElementById('call-wave').classList.remove('live');document.getElementById('rec-status-txt').textContent='Demo complete';document.getElementById('rec-status-txt').style.color='var(--green)';return;}
+  const l=DEMO[demoIdx++];
+  addTx(l.t,l.d?'DR. RAJAN':'PATIENT',l.d?'':'remote');
+  wc+=l.t.split(/\s+/).length;document.getElementById('word-count').textContent=wc+' words';
+  demoTimer=setTimeout(nextDemoLine,1800+Math.random()*900);
+}
+function addTx(txt,spk,cls){
+  txList.push({txt,spk,cls,ts:new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})});
+  renderTx();
+}
+function renderTx(){
+  const b=document.getElementById('tx-body');
+  if(!txList.length){b.innerHTML='<div id="tx-ph" style="text-align:center;padding:40px 16px;color:var(--text3);font-size:13px;"><div style="font-size:30px;margin-bottom:10px;opacity:.3;">🎙️</div>Start recording or use Demo Mode.</div>';return;}
+  b.innerHTML=txList.map(e=>`<div class="tx-entry ${e.cls}"><div class="tx-spk">${e.spk}<span class="tx-ts">${e.ts}</span></div><div style="font-size:13.5px;line-height:1.65;">${e.txt}</div></div>`).join('');
+  b.scrollTop=b.scrollHeight;
+}
+function clearTx(){txList=[];wc=0;document.getElementById('word-count').textContent='0 words';document.getElementById('interim-txt').textContent='';renderTx();document.getElementById('note-ph').style.display='block';document.getElementById('note-content').style.display='none';}
+function copyTx(){if(!txList.length){alert('No transcript yet.');return;}navigator.clipboard.writeText(txList.map(e=>`[${e.ts}] ${e.spk}: ${e.txt}`).join('\n')).then(()=>alert('Copied!'));}
+function exportTx(){
+  if(!txList.length){alert('No transcript yet.');return;}
+  const txt='MEDISENSE AI — CONSULTATION TRANSCRIPT\n'+new Date().toLocaleString()+'\n\n'+txList.map(e=>`[${e.ts}] ${e.spk}:\n${e.txt}`).join('\n\n');
+  dl(txt,'transcript_'+today()+'.txt');
+}
+async function generateNote(){
+  if(!txList.length){alert('No transcript available. Record or run Demo Mode first.');return;}
+  document.getElementById('note-ph').style.display='none';document.getElementById('note-content').style.display='none';document.getElementById('note-loading').style.display='block';
+  const txText=txList.map(e=>`${e.spk}: ${e.txt}`).join('\n');
+  try{
+    const raw=await claudeAPI(
+      `You are a medical scribe AI. Extract a structured SOAP clinical note from the consultation transcript.
+Return ONLY a JSON object (no markdown, no backticks):
+{"subjective":"patient reported symptoms","objective":"vitals or exam findings mentioned","assessment":"brief clinical assessment in 1-2 sentences","plan":"investigations and management","medications":"mentioned medications or none","follow_up":"recommended follow-up"}`,
+      'Transcript:\n'+txText
+    );
+    let p;try{p=JSON.parse(raw.replace(/```json|```/g,'').trim());}catch(e){p=null;}
+    document.getElementById('note-loading').style.display='none';document.getElementById('note-content').style.display='block';
+    if(p){
+      window._note=p;
+      document.getElementById('note-content').innerHTML=`<div class="note-box">${Object.entries(p).filter(([k,v])=>v).map(([k,v])=>`<div style="margin-bottom:10px;"><div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;">${k.replace('_',' ')}</div><div style="font-size:13.5px;line-height:1.65;color:var(--text2);">${v}</div></div>`).join('')}<div style="display:flex;gap:7px;margin-top:11px;"><button class="btn-sm" onclick="copyNote()">Copy</button><button class="btn-sm" onclick="exportNote()">Export</button></div></div>`;
+    }else{document.getElementById('note-content').innerHTML=`<div class="note-box" style="font-size:13.5px;line-height:1.7;color:var(--text2);">${raw}</div>`;}
+  }catch(e){document.getElementById('note-loading').style.display='none';document.getElementById('note-ph').style.display='block';alert('Error generating note. Please try again.');}
+}
+function copyNote(){if(!window._note)return;navigator.clipboard.writeText(JSON.stringify(window._note,null,2)).then(()=>alert('Copied!'));}
+function exportNote(){if(!window._note)return;const n=window._note;dl('CLINICAL NOTE\n'+new Date().toLocaleString()+'\n\n'+Object.entries(n).filter(([k,v])=>v).map(([k,v])=>`${k.toUpperCase().replace('_',' ')}:\n${v}`).join('\n\n'),'clinical_note.txt');}
+
+
+
+
+
+/* ═══ OCR — CLAUDE VISION ═══ */
+let uploadedImageB64=null,uploadedImageType=null,camOcrStream=null;
+
+function switchOcrMode(mode,el){
+  document.querySelectorAll('.ocr-mode').forEach(m=>m.classList.remove('active'));
+  document.querySelectorAll('.ocr-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('ocr-'+mode).classList.add('active');el.classList.add('active');
+}
+
+// Drag & drop
+const dropLbl=document.getElementById('drop-label');
+if(dropLbl){
+  ['dragenter','dragover'].forEach(ev=>dropLbl.addEventListener(ev,e=>{e.preventDefault();e.stopPropagation();dropLbl.classList.add('dragging');}));
+  ['dragleave','dragend'].forEach(ev=>dropLbl.addEventListener(ev,e=>{e.preventDefault();dropLbl.classList.remove('dragging');}));
+  dropLbl.addEventListener('drop',e=>{
+    e.preventDefault();e.stopPropagation();dropLbl.classList.remove('dragging');
+    const f=e.dataTransfer.files[0];
+    if(f) loadImageFile(f);
+  });
+}
+
+function handleImageUpload(e){
+  const f=e.target.files[0];
+  if(f) loadImageFile(f);
+  // Reset input so same file can be re-selected
+  e.target.value='';
+}
+
+function loadImageFile(file){
+  if(!file.type.startsWith('image/')){
+    alert('Please upload an image file (JPG, PNG, WEBP, BMP, or GIF).\n\nFor PDFs, take a screenshot first and upload the image.');
+    return;
+  }
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    const dataUrl=ev.target.result;
+    uploadedImageB64=dataUrl.split(',')[1];
+    uploadedImageType=file.type||'image/jpeg';
+    const img=document.getElementById('preview-img');
+    img.src=dataUrl;
+    img.onload=()=>{
+      document.getElementById('img-preview-wrap').style.display='block';
+      document.getElementById('analyze-img-btn').style.display='flex';
+      document.getElementById('upload-prog').style.display='none';
+      // Update drop label text
+      document.querySelector('#drop-label div:nth-child(2)').textContent='✓ '+file.name;
+      document.querySelector('#drop-label div:nth-child(3)').textContent='Click "Analyze" below to extract lab values';
+    };
+  };
+  reader.onerror=()=>alert('Failed to read file. Please try again.');
+  reader.readAsDataURL(file);
+}
+
+async function analyzeImageWithClaude(){
+  if(!uploadedImageB64){alert('Please upload an image first.');return;}
+  document.getElementById('analyze-img-txt').textContent='Analyzing…';
+  document.getElementById('analyze-img-spinner').style.display='block';
+  document.getElementById('analyze-img-btn').disabled=true;
+  // Animate progress bar
+  let pct=0;const pi=setInterval(()=>{pct=Math.min(pct+Math.random()*15,90);document.getElementById('upload-bar').style.width=pct+'%';document.getElementById('upload-pct').textContent=Math.round(pct)+'%';},200);
+  document.getElementById('upload-prog').style.display='block';
+  await doVisionAnalysis(uploadedImageB64,uploadedImageType);
+  clearInterval(pi);document.getElementById('upload-bar').style.width='100%';document.getElementById('upload-pct').textContent='100%';
+  document.getElementById('analyze-img-txt').textContent='Analyze with Claude Vision';
+  document.getElementById('analyze-img-spinner').style.display='none';
+  document.getElementById('analyze-img-btn').disabled=false;
+}
+
+async function startCam(){
+  const camPh=document.getElementById('cam-ph');
+  const camVid=document.getElementById('cam-vid');
+  const camPhTxt=document.getElementById('cam-ph-txt');
+  if(camOcrStream){
+    // Stop existing stream
+    camOcrStream.getTracks().forEach(t=>t.stop());
+    camOcrStream=null;
+    camVid.style.display='none';
+    camVid.srcObject=null;
+    camPh.style.display='flex';
+    camPhTxt.textContent='Click Start Camera';
+    return;
+  }
+  try{
+    camPhTxt.textContent='Requesting camera…';
+    camOcrStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment',width:{ideal:1280},height:{ideal:720}},audio:false});
+    camVid.srcObject=camOcrStream;
+    camVid.style.display='block';
+    camPh.style.display='none';
+    // Wait for video to be ready
+    await new Promise(res=>{camVid.onloadedmetadata=()=>{camVid.play().then(res).catch(res);};});
+  }catch(e){
+    camPhTxt.textContent='Click Start Camera';
+    if(e.name==='NotAllowedError'||e.name==='PermissionDeniedError'){
+      alert('Camera access was denied.\n\nTo allow camera access:\n1. Click the camera/lock icon in your browser address bar\n2. Set Camera to "Allow"\n3. Refresh the page\n\nAlternatively, use the "Upload Image" tab to upload a photo of the report.');
+    } else {
+      alert('Could not access camera: '+e.message+'\n\nPlease use the "Upload Image" tab instead.');
+    }
+  }
+}
+
+async function captureAndAnalyze(){
+  const v=document.getElementById('cam-vid');
+  if(!camOcrStream||!v.srcObject){alert('Please click "Start Camera" first to enable your camera.');return;}
+  if(v.videoWidth===0){alert('Camera is still initializing. Please wait a moment and try again.');return;}
+  const c=document.getElementById('cam-canvas');
+  c.width=v.videoWidth;c.height=v.videoHeight;
+  c.getContext('2d').drawImage(v,0,0);
+  const dataUrl=c.toDataURL('image/jpeg',0.95);
+  const b64=dataUrl.split(',')[1];
+  // Show preview in upload tab
+  document.getElementById('preview-img').src=dataUrl;
+  document.getElementById('img-preview-wrap').style.display='block';
+  document.getElementById('cam-prog').style.display='block';
+  let pct=0;
+  const pi=setInterval(()=>{pct=Math.min(pct+Math.random()*15,90);document.getElementById('cam-bar').style.width=pct+'%';document.getElementById('cam-pct').textContent=Math.round(pct)+'%';},200);
+  await doVisionAnalysis(b64,'image/jpeg');
+  clearInterval(pi);
+  document.getElementById('cam-bar').style.width='100%';document.getElementById('cam-pct').textContent='100%';
+  setTimeout(()=>document.getElementById('cam-prog').style.display='none',1200);
+}
+
+async function doVisionAnalysis(b64,mediaType){
+  document.getElementById('ocr-ph').style.display='none';
+  document.getElementById('ocr-findings').style.display='none';
+  document.getElementById('ocr-summary').style.display='none';
+  document.getElementById('ocr-loading').style.display='block';
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+      model:'claude-sonnet-4-20250514',max_tokens:1500,
+      system:`You are a medical lab analyst AI with vision capabilities. The user will send an image of a lab report or medical document. Extract all test results from the image, interpret them, and return ONLY a JSON object (no markdown, no backticks):
+{"findings":[{"name":"test name","value":"value with units","status":"normal|high|low|critical","reference":"normal range","interpretation":"1 sentence clinical meaning"}],"summary":"2-3 sentence overall clinical summary","concerns":["list of clinical concerns if any"],"recommendations":["list of actionable recommendations"]}
+If the image is not a lab report, set findings to [] and explain in summary. Be medically accurate.`,
+      messages:[{role:'user',content:[{type:'image',source:{type:'base64',media_type:mediaType,data:b64}},{type:'text',text:'Please analyze this lab report image and extract all test findings.'}]}]
+    })});
+    const data=await res.json();
+    if(data.error){throw new Error(data.error.message||'API error');}
+    const raw=data.content[0].text;
+    let p;try{p=JSON.parse(raw.replace(/```json|```/g,'').trim());}catch(e){p=null;}
+    window._lastReport=p;
+    document.getElementById('ocr-loading').style.display='none';
+    document.getElementById('ocr-findings').style.display='block';
+    document.getElementById('ocr-summary').style.display='block';
+    if(p){renderOcrResults(p);}else{document.getElementById('ocr-findings').innerHTML=`<div class="note-box" style="font-size:13.5px;line-height:1.7;color:var(--text2);">${raw}</div>`;}
+  }catch(e){
+    document.getElementById('ocr-loading').style.display='none';document.getElementById('ocr-ph').style.display='block';
+    alert('Error analyzing image: '+e.message+'\n\nPlease try again or use the Manual Entry tab.');
+  }
+}
+
+async function analyzeManualValues(){
+  const vals=[];
+  [['m-hb','Hemoglobin','g/dL'],['m-wbc','WBC','×10³/μL'],['m-plt','Platelets','×10³/μL'],['m-glu','Blood Glucose','mg/dL'],['m-cr','Creatinine','mg/dL'],['m-tsh','TSH','mIU/L']].forEach(([id,name,unit])=>{const v=document.getElementById(id).value;if(v)vals.push(`${name}: ${v} ${unit}`);});
+  if(!vals.length){alert('Enter at least one lab value.');return;}
+  document.getElementById('manual-txt').textContent='Analyzing…';document.getElementById('manual-spin').style.display='block';
+  document.getElementById('ocr-ph').style.display='none';document.getElementById('ocr-findings').style.display='none';document.getElementById('ocr-summary').style.display='none';document.getElementById('ocr-loading').style.display='block';
+  try{
+    const raw=await claudeAPI(
+      `You are a medical lab analyst AI. Analyze lab values and return ONLY a JSON object (no markdown):
+{"findings":[{"name":"test name","value":"value with units","status":"normal|high|low|critical","reference":"normal range","interpretation":"1 sentence"}],"summary":"2-3 sentence clinical summary","concerns":["concerns"],"recommendations":["recommendations"]}`,
+      'Lab values:\n'+vals.join('\n')
+    );
+    let p;try{p=JSON.parse(raw.replace(/```json|```/g,'').trim());}catch(e){p=null;}
+    window._lastReport=p;
+    document.getElementById('ocr-loading').style.display='none';document.getElementById('ocr-findings').style.display='block';document.getElementById('ocr-summary').style.display='block';
+    if(p){renderOcrResults(p);}else{document.getElementById('ocr-findings').innerHTML=`<div class="note-box" style="font-size:13.5px;line-height:1.7;color:var(--text2);">${raw}</div>`;}
+  }catch(e){document.getElementById('ocr-loading').style.display='none';document.getElementById('ocr-ph').style.display='block';alert('Error: '+e.message);}
+  document.getElementById('manual-txt').textContent='Analyze with AI';document.getElementById('manual-spin').style.display='none';
+}
+
+function renderOcrResults(p){
+  const cm={normal:'var(--green)',high:'var(--red)',low:'var(--amber)',critical:'var(--red)'};
+  const fm={normal:'<span class="flg fn">NORMAL</span>',high:'<span class="flg fh">HIGH</span>',low:'<span class="flg fl">LOW</span>',critical:'<span class="flg fh">CRITICAL</span>'};
+  const rows=(p.findings||[]).map(f=>`<div class="f-row"><div class="f-dot" style="background:${cm[f.status]||'var(--text3)'}"></div><div class="f-name">${f.name}</div><div class="f-val">${f.value}</div><div class="f-ref">${f.reference||'—'}</div>${fm[f.status]||''}<div style="font-size:11px;color:var(--text3);flex:1;margin-left:6px;">${f.interpretation||''}</div></div>`).join('');
+  document.getElementById('ocr-findings').innerHTML=`<div style="font-size:11.5px;font-weight:500;color:var(--text3);margin-bottom:6px;">Findings</div><div class="f-list">${rows||'<div style="padding:12px;font-size:13px;color:var(--text3);">No structured findings extracted.</div>'}</div>`;
+  let sum=`<div class="sum-box"><div class="sum-title">Clinical Summary</div><p style="font-size:13px;color:var(--text2);line-height:1.65;margin-bottom:${p.recommendations&&p.recommendations.length?'10':'0'}px;">${p.summary||''}</p>`;
+  if(p.recommendations&&p.recommendations.length){sum+=`<div style="font-size:11.5px;font-weight:500;color:var(--accent);margin-bottom:6px;">Recommendations</div>${p.recommendations.map(r=>`<div class="rec-item">${r}</div>`).join('')}`;}
+  document.getElementById('ocr-summary').innerHTML=sum+'</div>';
+}
+
+function exportReport(){
+  const d=window._lastReport;if(!d){alert('No analysis yet.');return;}
+  dl('MEDISENSE AI — REPORT ANALYSIS\n'+new Date().toLocaleString()+'\n\nFINDINGS:\n'+(d.findings||[]).map(f=>`${f.name}: ${f.value} [${(f.status||'').toUpperCase()}] | Ref: ${f.reference||'—'} | ${f.interpretation||''}`).join('\n')+'\n\nSUMMARY:\n'+(d.summary||'')+'\n\nRECOMMENDATIONS:\n'+(d.recommendations||[]).join('\n'),'report_'+today()+'.txt');
+}
+
+/* ═══ DISEASE PREDICTION ═══ */
+['Fever','Cough','Headache','Fatigue','Chest Pain','Shortness of Breath','Nausea','Vomiting','Diarrhea','Abdominal Pain','Joint Pain','Back Pain','Sore Throat','Runny Nose','Dizziness','Weight Loss','Night Sweats','Skin Rash','Swelling','Palpitations','Loss of Appetite','Confusion'].forEach(s=>{
+  const c=document.createElement('div');c.className='s-chip';c.innerHTML=`<div class="chk"></div>${s}`;c.onclick=()=>c.classList.toggle('sel');document.getElementById('sym-grid').appendChild(c);
+});
+function clearSym(){document.querySelectorAll('.s-chip').forEach(c=>c.classList.remove('sel'));document.getElementById('symp-ctx').value='';document.getElementById('pred-results').style.display='none';document.getElementById('pred-ph').style.display='block';}
+async function runPrediction(){
+  const sel=[...document.querySelectorAll('.s-chip.sel')].map(c=>c.textContent.trim());
+  if(!sel.length){alert('Select at least one symptom.');return;}
+  const ctx=document.getElementById('symp-ctx').value;
+  document.getElementById('pred-ph').style.display='none';document.getElementById('pred-results').style.display='none';document.getElementById('pred-loading').style.display='block';
+  document.getElementById('pred-txt').textContent='Analyzing…';document.getElementById('pred-spin').style.display='block';
+  try{
+    const raw=await claudeAPI(
+      `You are a clinical differential diagnosis AI. Generate top 4 differential diagnoses.
+Return ONLY a JSON array (no markdown):
+[{"name":"Disease","probability":75,"color":"#hexcolor","description":"2-sentence reason","urgency":"low|moderate|high|emergency","next_steps":"recommended next action"}]
+Colors: #2563eb, #16a34a, #d97706, #dc2626, #7c3aed. Be medically accurate.`,
+      `Symptoms: ${sel.join(', ')}${ctx?'\nContext: '+ctx:''}`
+    );
+    let d;try{d=JSON.parse(raw.replace(/```json|```/g,'').trim());}catch(e){d=null;}
+    document.getElementById('pred-loading').style.display='none';document.getElementById('pred-txt').textContent='Run AI Prediction';document.getElementById('pred-spin').style.display='none';document.getElementById('pred-results').style.display='block';
+    if(d&&Array.isArray(d)){
+      const um={low:{c:'var(--green)',bg:'var(--green-bg)',t:'Low urgency'},moderate:{c:'var(--amber)',bg:'var(--amber-bg)',t:'Moderate'},high:{c:'var(--red)',bg:'var(--red-bg)',t:'High urgency'},emergency:{c:'var(--red)',bg:'var(--red-bg)',t:'🚨 Emergency'}};
+      document.getElementById('pred-content').innerHTML=d.map(x=>{const u=um[x.urgency]||um.moderate;return`<div class="d-card"><div class="d-hdr"><div class="d-name">${x.name}</div><div class="d-pct" style="color:${x.color}">${x.probability}%</div></div><div class="d-bar-bg"><div class="d-bar" style="width:${x.probability}%;background:${x.color}"></div></div><div class="d-info">${x.description}</div><div class="d-ftr"><span class="ubadge" style="background:${u.bg};color:${u.c}">${u.t}</span><span style="font-size:12px;color:var(--text3);">→ ${x.next_steps}</span></div></div>`;}).join('')+`<div class="disclaimer"><span style="font-size:15px;flex-shrink:0;">⚠️</span><span>Educational use only. Not a substitute for clinical evaluation.</span></div>`;
+    }else{document.getElementById('pred-content').innerHTML=`<p style="font-size:13.5px;line-height:1.7;color:var(--text2);">${raw}</p>`;}
+  }catch(e){document.getElementById('pred-loading').style.display='none';document.getElementById('pred-txt').textContent='Run AI Prediction';document.getElementById('pred-spin').style.display='none';document.getElementById('pred-ph').style.display='block';alert('Error: '+e.message);}
+}
+
+/* ═══ CHAT ═══ */
+const chatH=[];
+async function sendChat(){
+  const inp=document.getElementById('chat-in');const txt=inp.value.trim();if(!txt)return;
+  inp.value='';appendMsg('user',txt);chatH.push({role:'user',content:txt});
+  const ld=appendLoad();
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:'You are MediSense AI, a clinical assistant for healthcare professionals. Provide concise, evidence-based medical information. Remind users you assist but do not replace professional judgment.',messages:chatH})});
+    const data=await res.json();const reply=data.content[0].text;
+    chatH.push({role:'assistant',content:reply});ld.remove();appendMsg('ai',reply);
+  }catch(e){ld.remove();appendMsg('ai','Connection error. Please try again.');}
+}
+function appendMsg(role,txt){const d=document.createElement('div');d.className='msg '+role;d.innerHTML=txt.replace(/\n/g,'<br>')+`<div class="msg-time">${new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})}</div>`;const m=document.getElementById('chat-msgs');m.appendChild(d);m.scrollTop=m.scrollHeight;return d;}
+function appendLoad(){const d=document.createElement('div');d.className='msg ai';d.innerHTML='<div class="ldots"><span></span><span></span><span></span></div>';const m=document.getElementById('chat-msgs');m.appendChild(d);m.scrollTop=m.scrollHeight;return d;}
+
+/* ═══ SHARED ═══ */
+async function claudeAPI(sys,msg){
+  const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1200,system:sys,messages:[{role:'user',content:msg}]})});
+  const data=await res.json();if(!data.content||!data.content[0])throw new Error('No AI response');return data.content[0].text;
+}
+function today(){return new Date().toISOString().slice(0,10);}
+function dl(txt,name){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'text/plain'}));a.download=name;a.click();}
+</script>
+</body>
+</html>
